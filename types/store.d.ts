@@ -37,7 +37,11 @@ export interface ErrorLogInfo {
 
 export interface UserInfo {
   userId: string | number;
-  username: string;
+  id?: string | number;
+  username?: string;
+  nickname?: string;
+  account?: string;
+  email?: string;
   realName: string;
   avatar: string;
   desc?: string;

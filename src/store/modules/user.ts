@@ -6,8 +6,10 @@ import { RoleEnum } from '@/enums/roleEnum';
 import { PageEnum } from '@/enums/pageEnum';
 import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '@/utils/auth';
-import { GetUserInfoModel, LoginParams } from '@/api/sys/model/userModel';
-import { doLogout, getUserInfo, loginApi } from '@/api/sys/user';
+import { /* GetUserInfoModel, */ LoginParams } from '@/api/sys/model/userModel';
+import { doLogout /*  getUserInfo, loginApi */ } from '@/api/sys/user';
+import { GetUserInfoModel } from '@/api/basics/user/userModel';
+import { loginApi, getUserInfo } from '@/api/basics/user';
 import { useI18n } from '@/hooks/web/useI18n';
 import { useMessage } from '@/hooks/web/useMessage';
 import { router } from '@/router';
@@ -91,8 +93,8 @@ export const useUserStore = defineStore({
       try {
         const { goHome = true, mode, ...loginParams } = params;
         const data = await loginApi(loginParams, mode);
+        // console.log('_LOGIN result', data);
         const { token } = data;
-
         // save token
         this.setToken(token);
         return this.afterLoginAction(goHome);
@@ -104,12 +106,13 @@ export const useUserStore = defineStore({
       if (!this.getToken) return null;
       // get user info
       const userInfo = await this.getUserInfoAction();
-
       const sessionTimeout = this.sessionTimeout;
+      console.log('_afterLoginAction sessionTimeout', sessionTimeout);
       if (sessionTimeout) {
         this.setSessionTimeout(false);
       } else {
         const permissionStore = usePermissionStore();
+        console.log('_afterLoginAction isDynamicAddedRoute', !permissionStore.isDynamicAddedRoute);
         if (!permissionStore.isDynamicAddedRoute) {
           const routes = await permissionStore.buildRoutesAction();
           routes.forEach((route) => {
@@ -125,6 +128,7 @@ export const useUserStore = defineStore({
     async getUserInfoAction(): Promise<UserInfo | null> {
       if (!this.getToken) return null;
       const userInfo = await getUserInfo();
+      // console.log('_getUserInfoAction', userInfo);
       const { roles = [] } = userInfo;
       if (isArray(roles)) {
         const roleList = roles.map((item) => item.value) as RoleEnum[];

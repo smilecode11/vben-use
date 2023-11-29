@@ -276,6 +276,81 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
 }
 export const defHttp = createAxios();
 
+//  【调试使用】
+export const basicHttp = createAxios({
+  baseURL: '',
+  authenticationScheme: 'Bearer',
+  requestOptions: {
+    apiUrl: 'http://127.0.0.1:7001',
+    urlPrefix: '/vben/api',
+  },
+  transform: {
+    ...clone(transform),
+    transformResponseHook: basicTransformResponseHook,
+  },
+});
+
+function basicTransformResponseHook(res: AxiosResponse<Result>, options: RequestOptions) {
+  const { t } = useI18n();
+  const { isTransformResponse, isReturnNativeResponse } = options;
+  // 是否返回原生响应头 比如：需要获取响应头时使用该属性
+  if (isReturnNativeResponse) {
+    return res;
+  }
+  // 不进行任何处理，直接返回
+  // 用于页面代码可能需要直接获取code，data，message这些信息时开启
+  if (!isTransformResponse) {
+    return res.data;
+  }
+  // 错误的时候返回
+
+  const { data } = res;
+  if (!data) {
+    throw new Error(t('sys.api.apiRequestFailed'));
+  }
+  console.log('_ basicTransformResponseHook data', data);
+  const { errno, message, data: result } = data;
+  // 这里逻辑可以根据项目进行修改
+  const hasSuccess = data && Reflect.has(data, 'errno') && errno === ResultEnum.SUCCESS;
+  if (hasSuccess) {
+    let successMsg = message;
+
+    if (isNull(successMsg) || isUndefined(successMsg) || isEmpty(successMsg)) {
+      successMsg = t(`sys.api.operationSuccess`);
+    }
+
+    if (options.successMessageMode === 'modal') {
+      createSuccessModal({ title: t('sys.api.successTip'), content: successMsg });
+    } else if (options.successMessageMode === 'message') {
+      createMessage.success(successMsg);
+    }
+    return result;
+  }
+
+  // 在此处根据自己项目的实际情况对不同的code执行不同的操作
+  // 如果不希望中断当前请求，请return数据，否则直接抛出异常即可
+  let timeoutMsg = '';
+  switch (errno) {
+    case ResultEnum.TIMEOUT:
+      timeoutMsg = t('sys.api.timeoutMessage');
+      const userStore = useUserStoreWithOut();
+      userStore.logout(true);
+      break;
+    default:
+      if (message) {
+        timeoutMsg = message;
+      }
+  }
+
+  if (options.errorMessageMode === 'modal') {
+    createErrorModal({ title: t('sys.api.errorTip'), content: timeoutMsg });
+  } else if (options.errorMessageMode === 'message') {
+    createMessage.error(timeoutMsg);
+  }
+
+  throw new Error(timeoutMsg || t('sys.api.apiRequestFailed'));
+}
+
 // other api url
 // export const otherHttp = createAxios({
 //   requestOptions: {

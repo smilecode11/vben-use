@@ -40,6 +40,9 @@ export interface Result<T = any> {
   type: 'success' | 'error' | 'warning';
   message: string;
   result: T;
+  // basic 接口
+  errno?: number;
+  data?: T;
 }
 
 // multipart/form-data: upload file
