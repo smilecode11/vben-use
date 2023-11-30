@@ -160,6 +160,12 @@
   }
 
   function handleClick(icon: string) {
+    // console.log('_handleClick', icon);
+    // TIP: 如果是一样的，则清空
+    if (currentSelect.value === icon) {
+      currentSelect.value = '';
+      return;
+    }
     currentSelect.value = icon;
     if (props.copy) {
       copyText(icon, t('component.icon.copy'));
