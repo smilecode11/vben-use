@@ -16,12 +16,13 @@
   import { formSchema } from './menu.data';
   import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
   // import { getMenuList } from '@/api/demo/system';
-
   import { getAllMenuList, editMenu, createMenu } from '@/api/basics/system';
   import { MenuListItem } from '@/api/basics/system/systemModel';
+  import { usePropNameSet } from '@/hooks/custom/usePropNameSet';
 
   defineOptions({ name: 'MenuDrawer' });
 
+  const { findCurNodeAndSetDisabled } = usePropNameSet();
   const emit = defineEmits(['success', 'register']);
 
   const isUpdate = ref(true);
@@ -44,10 +45,13 @@
       });
     }
     let treeData = await getAllMenuList({});
-    // TODO: 剔除当前菜单及其下级菜单（disabled）
-    // console.log('_currMenu', data.record?.id);
-    // console.log('_treeData', treeData);
+    let currMenuId = data.record?.id;
     treeData = [{ id: 0, menuName: '顶级菜单' }, ...treeData];
+    // TIP: 编辑时需剔除当前菜单及其下级菜单（disabled）
+    if (currMenuId) {
+      findCurNodeAndSetDisabled(treeData, currMenuId, 'id', null);
+    }
+    // console.log('_treeData fmt', treeData);
     updateSchema({
       field: 'parentMenu',
       componentProps: { treeData },
@@ -60,7 +64,7 @@
     try {
       const values = await validate<MenuListItem>();
       setDrawerProps({ confirmLoading: true });
-      console.log(values);
+      // console.log(values);
       //  创建|编辑菜单
       !unref(isUpdate) ? await createMenu(values) : await editMenu(values);
 

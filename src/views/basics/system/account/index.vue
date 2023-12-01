@@ -24,7 +24,7 @@
                 color: 'error',
                 tooltip: '删除此账号',
                 popConfirm: {
-                  title: '是否确认删除',
+                  title: `是否确认删除【${record.account}】`,
                   placement: 'left',
                   confirm: handleDelete.bind(null, record),
                 },
@@ -39,26 +39,25 @@
 </template>
 <script lang="ts" setup>
   import { reactive } from 'vue';
-
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getAccountList } from '@/api/demo/system';
+  import { getAccountListByPage, deleteAccount } from '@/api/basics/system';
   import { PageWrapper } from '@/components/Page';
-  import DeptTree from './DeptTree.vue';
-
   import { useModal } from '@/components/Modal';
+  import DeptTree from './DeptTree.vue';
   import AccountModal from './AccountModal.vue';
 
   import { columns, searchFormSchema } from './account.data';
   import { useGo } from '@/hooks/web/usePage';
+  import { useMessage } from '@/hooks/web/useMessage';
 
   defineOptions({ name: 'AccountManagement' });
-
+  const { createMessage } = useMessage();
   const go = useGo();
   const [registerModal, { openModal }] = useModal();
   const searchInfo = reactive<Recordable>({});
   const [registerTable, { reload, updateTableDataRecord }] = useTable({
     title: '账号列表',
-    api: getAccountList,
+    api: getAccountListByPage,
     rowKey: 'id',
     columns,
     formConfig: {
@@ -88,7 +87,7 @@
   }
 
   function handleEdit(record: Recordable) {
-    console.log(record);
+    // console.log(record);
     openModal(true, {
       record,
       isUpdate: true,
@@ -96,16 +95,27 @@
   }
 
   function handleDelete(record: Recordable) {
-    console.log(record);
+    // console.log(record);
+    deleteAccount({ id: record.id })
+      .then(() => {
+        createMessage.success('删除成功');
+        reload();
+      })
+      .catch((e) => {
+        console.log('_deleteDept catch', e);
+      });
   }
 
   function handleSuccess({ isUpdate, values }) {
+    // console.log('_account handleSuccess', isUpdate, values);
     if (isUpdate) {
       // 演示不刷新表格直接更新内部数据。
       // 注意：updateTableDataRecord要求表格的rowKey属性为string并且存在于每一行的record的keys中
       const result = updateTableDataRecord(values.id, values);
       console.log(result);
+      createMessage.success('编辑成功');
     } else {
+      createMessage.success('新增成功');
       reload();
     }
   }

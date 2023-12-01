@@ -16,7 +16,7 @@
                 icon: 'ant-design:delete-outlined',
                 color: 'error',
                 popConfirm: {
-                  title: '是否确认删除',
+                  title: `是否确认删除【${record.menuName}】`,
                   placement: 'left',
                   confirm: handleDelete.bind(null, record),
                 },
@@ -35,10 +35,8 @@
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   // import { getMenuList } from '@/api/demo/system';
   import { getAllMenuList, deleteMenu } from '@/api/basics/system';
-
   import { useDrawer } from '@/components/Drawer';
   import MenuDrawer from './MenuDrawer.vue';
-
   import { columns, searchFormSchema } from './menu.data';
 
   defineOptions({ name: 'MenuManagement' });

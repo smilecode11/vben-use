@@ -16,7 +16,7 @@
                 icon: 'ant-design:delete-outlined',
                 color: 'error',
                 popConfirm: {
-                  title: '是否确认删除',
+                  title: `是否确认删除【${record.deptName}】`,
                   placement: 'left',
                   confirm: handleDelete.bind(null, record),
                 },
@@ -31,7 +31,9 @@
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getDeptList } from '@/api/demo/system';
+  import { useMessage } from '@/hooks/web/useMessage';
+  // import { getDeptList } from '@/api/demo/system';
+  import { getAllDeptList, deleteDept } from '@/api/basics/system/index';
 
   import { useModal } from '@/components/Modal';
   import DeptModal from './DeptModal.vue';
@@ -39,11 +41,11 @@
   import { columns, searchFormSchema } from './dept.data';
 
   defineOptions({ name: 'DeptManagement' });
-
+  const { createMessage } = useMessage();
   const [registerModal, { openModal }] = useModal();
   const [registerTable, { reload }] = useTable({
     title: '部门列表',
-    api: getDeptList,
+    api: getAllDeptList,
     columns,
     formConfig: {
       labelWidth: 120,
@@ -61,7 +63,7 @@
       title: '操作',
       dataIndex: 'action',
       // slots: { customRender: 'action' },
-      fixed: undefined,
+      fixed: 'right',
     },
   });
 
@@ -79,10 +81,19 @@
   }
 
   function handleDelete(record: Recordable) {
-    console.log(record);
+    // console.log('_handleDelete dept',record);
+    deleteDept({ id: record.id })
+      .then(() => {
+        createMessage.success('删除成功');
+        reload();
+      })
+      .catch((e) => {
+        console.log('_deleteDept catch', e);
+      });
   }
 
   function handleSuccess() {
+    createMessage.success('操作成功');
     reload();
   }
 </script>

@@ -16,7 +16,8 @@
   import { onMounted, ref } from 'vue';
 
   import { BasicTree, TreeItem } from '@/components/Tree';
-  import { getDeptList } from '@/api/demo/system';
+  // import { getDeptList } from '@/api/demo/system';
+  import { getAllDeptList } from '@/api/basics/system';
 
   defineOptions({ name: 'DeptTree' });
 
@@ -25,7 +26,7 @@
   const treeData = ref<TreeItem[]>([]);
 
   async function fetch() {
-    treeData.value = (await getDeptList()) as unknown as TreeItem[];
+    treeData.value = (await getAllDeptList({})) as unknown as TreeItem[];
   }
 
   function handleSelect(keys) {

@@ -16,7 +16,7 @@
                 icon: 'ant-design:delete-outlined',
                 color: 'error',
                 popConfirm: {
-                  title: '是否确认删除',
+                  title: `是否确认删除【${record.roleName}】`,
                   placement: 'left',
                   confirm: handleDelete.bind(null, record),
                 },
@@ -32,17 +32,14 @@
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { useMessage } from '@/hooks/web/useMessage';
-
   // import { getRoleListByPage } from '@/api/demo/system';
   import { getRoleListByPage, deleteRole } from '@/api/basics/system/index';
-
   import { useDrawer } from '@/components/Drawer';
   import RoleDrawer from './RoleDrawer.vue';
-
   import { columns, searchFormSchema } from './role.data';
 
   defineOptions({ name: 'RoleManagement' });
-
+  const { createMessage } = useMessage();
   const [registerDrawer, { openDrawer }] = useDrawer();
   const [registerTable, { reload }] = useTable({
     title: '角色列表',
@@ -83,20 +80,17 @@
   function handleDelete(record: Recordable) {
     // console.log('_handleDelete', record);
     deleteRole({ id: record.id })
-      .then((resp) => {
-        console.log('_resp', resp);
+      .then(() => {
+        createMessage.success('删除成功');
         reload();
       })
       .catch((e) => {
         console.log('_deleteRole catch', e);
       });
-
-    console.log(record);
   }
 
   function handleSuccess() {
     // console.log('_handleSuccess');
-    const { createMessage } = useMessage();
     createMessage.success('操作成功');
     reload();
   }

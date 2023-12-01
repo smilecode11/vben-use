@@ -74,7 +74,7 @@
       setDrawerProps({ confirmLoading: true });
       //  处理菜单tree值为number[]
       values.menu = values.menu['checked'];
-      console.log('_values', values);
+      // console.log('_values', values);
       //  创建|编辑角色
       !unref(isUpdate) ? await createRole(values) : await editRole(values);
       closeDrawer();

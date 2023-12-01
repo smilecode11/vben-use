@@ -9,14 +9,17 @@
   import { BasicForm, useForm } from '@/components/Form';
   import { formSchema } from './dept.data';
 
-  import { getDeptList } from '@/api/demo/system';
+  // import { getDeptList } from '@/api/demo/system';
+  import { DeptListItem } from '@/api/basics/system/systemModel';
+  import { getAllDeptList, createDept, editDept } from '@/api/basics/system/index';
+  import { usePropNameSet } from '@/hooks/custom/usePropNameSet';
 
   defineOptions({ name: 'DeptModal' });
 
   const emit = defineEmits(['success', 'register']);
 
   const isUpdate = ref(true);
-
+  const { findCurNodeAndSetDisabled } = usePropNameSet();
   const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
     labelWidth: 100,
     baseColProps: { span: 24 },
@@ -34,7 +37,13 @@
         ...data.record,
       });
     }
-    const treeData = await getDeptList();
+    let treeData = await getAllDeptList({});
+    treeData = [{ id: 0, deptName: '顶级部门' }, ...treeData];
+    // TIP: 处理部门结构，编辑时当前部门及下级不可选
+    let currDeptId = data.record?.id;
+    if (currDeptId) {
+      findCurNodeAndSetDisabled(treeData, currDeptId, 'id', null);
+    }
     updateSchema({
       field: 'parentDept',
       componentProps: { treeData },
@@ -45,10 +54,10 @@
 
   async function handleSubmit() {
     try {
-      const values = await validate();
+      const values = await validate<DeptListItem>();
       setModalProps({ confirmLoading: true });
-      // TODO custom api
-      console.log(values);
+      // console.log('_handleSubmit dept', values);
+      !unref(isUpdate) ? await createDept(values) : await editDept(values);
       closeModal();
       emit('success');
     } finally {

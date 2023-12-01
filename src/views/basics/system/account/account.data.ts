@@ -1,27 +1,29 @@
-import { getAllRoleList, isAccountExist } from '@/api/demo/system';
+import { getAllRoleList /* , isAccountExist  */, getDeptList } from '@/api/basics/system';
 import { BasicColumn, FormSchema } from '@/components/Table';
+import { h } from 'vue';
+import { Time } from '@/components/Time';
 
-/**
- * transform mock data
- * {
- *  0: '华东分部',
- * '0-0': '华东分部-研发部'
- * '0-1': '华东分部-市场部',
- *  ...
- * }
- */
-export const deptMap = (() => {
-  const pDept = ['华东分部', '华南分部', '西北分部'];
-  const cDept = ['研发部', '市场部', '商务部', '财务部'];
-
-  return pDept.reduce((map, p, pIdx) => {
-    map[pIdx] = p;
-
-    cDept.forEach((c, cIndex) => (map[`${pIdx}-${cIndex}`] = `${p}-${c}`));
-
-    return map;
-  }, {});
+//  角色列表
+export const allRolePromise = (async () => {
+  const roles = (await getAllRoleList()).map((item) => ({ id: item.id, roleName: item.roleName }));
+  return roles;
 })();
+const allRoleList = (await allRolePromise) || [];
+// console.log('_allRoleList', allRoleList);
+
+//  部门列表
+export const allDeptPromise = (async () => {
+  const depts = [
+    { id: 0, deptName: '未分配部门' },
+    ...(await getDeptList({})).items.map((item) => ({
+      id: item.id,
+      deptName: item.deptName,
+    })),
+  ];
+  return depts;
+})();
+const allDeptList = (await allDeptPromise) || [];
+// console.log('_allDeptList', allDeptList);
 
 export const columns: BasicColumn[] = [
   {
@@ -41,19 +43,26 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime',
+    dataIndex: 'createdAt',
     width: 180,
+    customRender: ({ record }) => {
+      return h(Time, {
+        value: record.createdAt,
+        mode: 'datetime',
+      });
+    },
   },
   {
     title: '角色',
     dataIndex: 'role',
     width: 200,
+    customRender: ({ value }) => allRoleList.find((item) => item.id == value)?.roleName,
   },
   {
     title: '所属部门',
     dataIndex: 'dept',
     customRender: ({ value }) => {
-      return deptMap[value];
+      return allDeptList.find((item) => item.id == value)?.deptName;
     },
   },
   {
@@ -79,37 +88,49 @@ export const searchFormSchema: FormSchema[] = [
 
 export const accountFormSchema: FormSchema[] = [
   {
+    field: 'id',
+    label: '用户ID',
+    component: 'Input',
+    show: false,
+  },
+  {
     field: 'account',
     label: '用户名',
     component: 'Input',
-    helpMessage: ['本字段演示异步验证', '不能输入带有admin的用户名'],
+    // helpMessage: ['本字段演示异步验证', '不能输入带有admin的用户名'],
     rules: [
       {
         required: true,
         message: '请输入用户名',
       },
-      {
-        trigger: 'blur',
-        validator(_, value) {
-          return new Promise((resolve, reject) => {
-            if (!value) return resolve();
-            isAccountExist(value)
-              .then(resolve)
-              .catch((err) => {
-                reject(err.message || '验证失败');
-              });
-          });
-        },
-      },
+      // {
+      //   trigger: 'blur',
+      //   validator(_, value) {
+      //     return new Promise((resolve, reject) => {
+      //       if (!value) return resolve();
+      //       isAccountExist({ account: value, id: (_ as any).id })
+      //         .then(resolve)
+      //         .catch((err) => {
+      //           reject(err.message || '验证失败');
+      //         });
+      //     });
+      //   },
+      // },
     ],
   },
   {
     field: 'pwd',
-    label: '密码',
+    label: '登录密码',
     component: 'InputPassword',
     required: true,
-    ifShow: false,
   },
+  // {
+  //   field: 'pwd',
+  //   label: '密码',
+  //   component: 'InputPassword',
+  //   required: true,
+  //   ifShow: false,
+  // },
   {
     label: '角色',
     field: 'role',
@@ -117,7 +138,7 @@ export const accountFormSchema: FormSchema[] = [
     componentProps: {
       api: getAllRoleList,
       labelField: 'roleName',
-      valueField: 'roleValue',
+      valueField: 'id',
     },
     required: true,
   },
@@ -133,7 +154,7 @@ export const accountFormSchema: FormSchema[] = [
       },
       getPopupContainer: () => document.body,
     },
-    required: true,
+    // required: true,
   },
   {
     field: 'nickname',

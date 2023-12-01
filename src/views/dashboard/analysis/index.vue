@@ -17,6 +17,8 @@
   import VisitRadar from './components/VisitRadar.vue';
   import SalesProductPie from './components/SalesProductPie.vue';
 
+  defineOptions({ name: 'Analysis' });
+
   const loading = ref(true);
 
   setTimeout(() => {

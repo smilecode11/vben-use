@@ -28,6 +28,8 @@
   import DynamicInfo from './components/DynamicInfo.vue';
   import SaleRadar from './components/SaleRadar.vue';
 
+  defineOptions({ name: 'Workbench' });
+
   const loading = ref(true);
 
   setTimeout(() => {

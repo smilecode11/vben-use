@@ -110,7 +110,16 @@ export const formSchema: FormSchema[] = [
     component: 'Input',
     required: true,
   },
-
+  {
+    field: 'menuEnName',
+    label: '菜单英文名',
+    component: 'Input',
+  },
+  {
+    field: 'name',
+    label: '菜单标识',
+    component: 'Input',
+  },
   {
     field: 'parentMenu',
     label: '上级菜单',

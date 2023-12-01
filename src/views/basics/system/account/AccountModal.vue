@@ -8,7 +8,9 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { BasicForm, useForm } from '@/components/Form';
   import { accountFormSchema } from './account.data';
-  import { getDeptList } from '@/api/demo/system';
+  // import { getDeptList } from '@/api/demo/system';
+  import { getAllDeptList, editAccount, createAccount } from '@/api/basics/system';
+  import { AccountListItem } from '@/api/basics/system/systemModel';
 
   defineOptions({ name: 'AccountModal' });
 
@@ -31,15 +33,20 @@
     resetFields();
     setModalProps({ confirmLoading: false });
     isUpdate.value = !!data?.isUpdate;
+    console.log('_', data.record);
 
     if (unref(isUpdate)) {
       rowId.value = data.record.id;
       setFieldsValue({
         ...data.record,
+        // TIP: 角色（部门）id的会对值的类型进行全等判断
+        role: Number(data.record.role),
+        dept: Number(data.record.dept),
       });
     }
 
-    const treeData = await getDeptList();
+    let treeData = await getAllDeptList({});
+    treeData = [{ id: 0, deptName: '未分配部门' }, ...treeData];
     updateSchema([
       {
         field: 'pwd',
@@ -56,10 +63,10 @@
 
   async function handleSubmit() {
     try {
-      const values = await validate();
+      const values = await validate<AccountListItem>();
       setModalProps({ confirmLoading: true });
-      // TODO custom api
-      console.log(values);
+      // console.log('_handleSubmit', values);
+      !unref(isUpdate) ? await createAccount(values) : await editAccount(values);
       closeModal();
       emit('success', { isUpdate: unref(isUpdate), values: { ...values, id: rowId.value } });
     } finally {
