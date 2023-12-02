@@ -228,6 +228,20 @@ export const usePermissionStore = defineStore({
             console.error(error);
           }
 
+          // TIP：外部页面嵌套模拟
+          // routeList = [
+          //   ...routeList,
+          //   {
+          //     path: 'doc',
+          //     name: 'Doc',
+          //     component: 'iFrame',
+          //     meta: {
+          //       frameSrc: 'https://doc.vvbin.cn/',
+          //       title: t('routes.demo.iframe.doc'),
+          //     },
+          //   },
+          // ];
+
           // Dynamically introduce components
           // 动态引入组件
           routeList = transformObjToRoute(routeList);

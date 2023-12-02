@@ -112,14 +112,14 @@ export const formSchema: FormSchema[] = [
   },
   {
     field: 'menuEnName',
-    label: '菜单英文名',
+    label: '英文名(标识)',
     component: 'Input',
   },
-  {
-    field: 'name',
-    label: '菜单标识',
-    component: 'Input',
-  },
+  // {
+  //   field: 'name',
+  //   label: '菜单标识',
+  //   component: 'Input',
+  // },
   {
     field: 'parentMenu',
     label: '上级菜单',
