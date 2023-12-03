@@ -87,6 +87,7 @@
 
   function handleUploadSuccess({ source, data }) {
     sourceValue.value = source;
+    // console.log('_ CropperAvatar uploadSuccess', source, data);
     emit('change', { source, data });
     createMessage.success(t('component.cropper.uploadSuccess'));
   }

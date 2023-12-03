@@ -34,6 +34,7 @@
       @register="registerPreviewModal"
       @list-change="handlePreviewChange"
       @delete="handlePreviewDelete"
+      :useCustomDrag="props.useCustomDrag"
     />
   </div>
 </template>
@@ -87,6 +88,7 @@
 
   // 上传modal保存操作
   function handleChange(urls: string[]) {
+    // console.log('_handleChange', urls);
     fileList.value = [...unref(fileList), ...(urls || [])];
     emit('update:value', fileList.value);
     emit('change', fileList.value);
@@ -94,6 +96,7 @@
 
   // 预览modal保存操作
   function handlePreviewChange(urls: string[]) {
+    // console.log('_handlePreviewChange', urls);
     fileList.value = [...(urls || [])];
     emit('update:value', fileList.value);
     emit('change', fileList.value);

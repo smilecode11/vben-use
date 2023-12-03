@@ -5,6 +5,8 @@ import { Progress, Tag } from 'ant-design-vue';
 import TableAction from '@/components/Table/src/components/TableAction.vue';
 import ThumbUrl from './ThumbUrl.vue';
 import { useI18n } from '@/hooks/web/useI18n';
+import { h } from 'vue';
+import { DragOutlined } from '@ant-design/icons-vue';
 
 const { t } = useI18n();
 
@@ -89,8 +91,23 @@ export function createActionColumn(handleRemove: Function): FileBasicColumn {
   };
 }
 // 文件预览列表
-export function createPreviewColumns(): BasicColumn[] {
+export function createPreviewColumns({ useCustomDrag = false }): BasicColumn[] {
   return [
+    {
+      dataIndex: 'order',
+      title: '排序',
+      width: 50,
+      customRender: () => {
+        return h(DragOutlined, {
+          class: 'handle',
+          style: {
+            cursor: 'move',
+            fontSize: '18px',
+          },
+        });
+      },
+      ifShow: useCustomDrag,
+    },
     {
       dataIndex: 'url',
       title: t('component.upload.legend'),

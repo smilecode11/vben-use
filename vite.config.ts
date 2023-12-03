@@ -32,5 +32,8 @@ export default defineApplicationConfig({
         },
       },
     },
+    build: {
+      target: 'esnext',
+    },
   },
 });

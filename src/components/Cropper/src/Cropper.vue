@@ -171,6 +171,17 @@
     context.fill();
     return canvas;
   }
+
+  /** 设置比例并重新裁剪*/
+  function setAspectRatioAndCrop(aspectRatio: number) {
+    if (!cropper.value) return;
+    cropper.value.setAspectRatio(aspectRatio);
+    realTimeCroppered();
+  }
+  //  TIP: 暴露裁切方法
+  defineExpose({
+    setAspectRatioAndCrop,
+  });
 </script>
 <style lang="less">
   @prefix-cls: ~'@{namespace}-cropper-image';

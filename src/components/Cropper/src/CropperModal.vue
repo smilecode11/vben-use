@@ -190,7 +190,9 @@
       try {
         setModalProps({ confirmLoading: true });
         const result = await uploadApi({ name: 'file', file: blob, filename });
-        emit('uploadSuccess', { source: previewSource.value, data: result.url });
+        //  TIP: 修改返回结果
+        // console.log('_CropperModal uploadApi', result.data.data);
+        emit('uploadSuccess', { source: previewSource.value, data: result.data.data });
         closeModal();
       } finally {
         setModalProps({ confirmLoading: false });

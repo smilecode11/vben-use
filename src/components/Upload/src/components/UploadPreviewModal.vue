@@ -7,7 +7,13 @@
     @register="register"
     :showOkBtn="false"
   >
-    <FileList :dataSource="fileListRef" :columns="columns" :actionColumn="actionColumn" />
+    <FileList
+      :dataSource="fileListRef"
+      :columns="columns"
+      :actionColumn="actionColumn"
+      :useCustomDrag="props.useCustomDrag"
+      @sort="onSort"
+    />
   </BasicModal>
 </template>
 <script lang="ts" setup>
@@ -25,7 +31,7 @@
 
   const emit = defineEmits(['list-change', 'register', 'delete']);
 
-  const columns = createPreviewColumns() as any[];
+  const columns = createPreviewColumns({ useCustomDrag: props.useCustomDrag }) as any[];
   const actionColumn = createPreviewActionColumn({ handleRemove, handleDownload }) as any;
 
   const [register] = useModalInner();
@@ -66,6 +72,14 @@
   function handleDownload(record: PreviewFileItem) {
     const { url = '' } = record;
     downloadByUrl({ url });
+  }
+
+  //  TIP: 排序变更
+  function onSort(newArr) {
+    // console.log('_onSort', newArr);
+    if (Array.isArray(newArr)) {
+      emit('list-change', newArr);
+    }
   }
 </script>
 <style lang="less">

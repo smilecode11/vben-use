@@ -4,6 +4,7 @@
   import { useSortable } from '@/hooks/web/useSortable';
   import { useModalContext } from '@/components/Modal/src/hooks/useModalContext';
   import { defineComponent, CSSProperties, watch, nextTick, ref, onMounted } from 'vue';
+  import Sortable from 'sortablejs';
 
   export default defineComponent({
     name: 'FileList',
@@ -39,14 +40,37 @@
                 data.splice(newIndex, 0, oldItem);
 
                 nextTick(() => {
+                  console.log('_drag', data);
                   emit('update:dataSource', data);
-
                   isFunction(onAfterEnd) && onAfterEnd(data);
                 });
               }
             },
           }).initSortable(),
         );
+      }
+
+      //  TIP: 排序自定义逻辑
+      if (props.useCustomDrag) {
+        onMounted(() => {
+          // console.log('_props.useCustomDrag');
+          new Sortable(sortableContainer.value, {
+            group: 'sortList',
+            animation: 150,
+            handle: '.handle',
+            onEnd(evt) {
+              // console.log('onEnd to', evt.to);
+              const eles = evt.to.getElementsByTagName('tr');
+              let newArr = [] as any[];
+              for (let i = 0; i < eles.length; i++) {
+                let url = eles[i].getAttribute('data-url');
+                newArr.push(url);
+              }
+              // 抛出新的排序
+              emit('sort', newArr);
+            },
+          });
+        });
       }
 
       return () => {
@@ -58,22 +82,24 @@
             <table class="file-table">
               <colgroup>
                 {columnList.map((item) => {
-                  const { width = 0, dataIndex } = item;
+                  const { width = 0, dataIndex, ifShow = true } = item;
                   const style: CSSProperties = {
                     width: `${width}px`,
                     minWidth: `${width}px`,
                   };
-                  return <col style={width ? style : {}} key={dataIndex} />;
+                  return ifShow && <col style={width ? style : {}} key={dataIndex} />;
                 })}
               </colgroup>
               <thead>
                 <tr class="file-table-tr">
                   {columnList.map((item) => {
-                    const { title = '', align = 'center', dataIndex } = item;
+                    const { title = '', align = 'center', dataIndex, ifShow = true } = item;
                     return (
-                      <th class={['file-table-th', align]} key={dataIndex}>
-                        {title}
-                      </th>
+                      ifShow && (
+                        <th class={['file-table-th', align]} key={dataIndex}>
+                          {title}
+                        </th>
+                      )
                     );
                   })}
                 </tr>
@@ -81,16 +107,27 @@
               <tbody ref={sortableContainer}>
                 {dataSource.map((record = {}, index) => {
                   return (
-                    <tr class="file-table-tr" key={`${index + record.name || ''}`}>
+                    <tr
+                      class="file-table-tr"
+                      data-url={record.url}
+                      key={`${index + record.name || ''}`}
+                    >
                       {columnList.map((item) => {
-                        const { dataIndex = '', customRender, align = 'center' } = item;
+                        const {
+                          dataIndex = '',
+                          customRender,
+                          align = 'center',
+                          ifShow = true,
+                        } = item;
                         const render = customRender && isFunction(customRender);
                         return (
-                          <td class={['file-table-td break-all', align]} key={dataIndex}>
-                            {render
-                              ? customRender?.({ text: record[dataIndex], record })
-                              : record[dataIndex]}
-                          </td>
+                          ifShow && (
+                            <td class={['file-table-td break-all', align]} key={dataIndex}>
+                              {render
+                                ? customRender?.({ text: record[dataIndex], record })
+                                : record[dataIndex]}
+                            </td>
+                          )
                         );
                       })}
                     </tr>

@@ -3,6 +3,13 @@
     <DeptTree class="w-1/4 xl:w-1/5" @select="handleSelect" />
     <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5" :searchInfo="searchInfo">
       <template #toolbar>
+        <!-- TIP: 细粒度权限测试代码 -->
+        <a-button type="warning" v-if="hasPermission(['10001'])" @click="testAuth">
+          细粒度权限10001
+        </a-button>
+        <a-button type="error" v-if="hasPermission(['10002', '10003'])" @click="testAuth">
+          细粒度权限10002
+        </a-button>
         <a-button type="primary" @click="handleCreate">新增账号</a-button>
       </template>
       <template #bodyCell="{ column, record }">
@@ -49,9 +56,11 @@
   import { columns, searchFormSchema } from './account.data';
   import { useGo } from '@/hooks/web/usePage';
   import { useMessage } from '@/hooks/web/useMessage';
+  import { usePermission } from '@/hooks/web/usePermission';
 
   defineOptions({ name: 'AccountManagement' });
   const { createMessage } = useMessage();
+  const { hasPermission } = usePermission();
   const go = useGo();
   const [registerModal, { openModal }] = useModal();
   const searchInfo = reactive<Recordable>({});
@@ -79,6 +88,10 @@
       // slots: { customRender: 'action' },
     },
   });
+
+  function testAuth() {
+    console.log('_Test AUTH');
+  }
 
   function handleCreate() {
     openModal(true, {

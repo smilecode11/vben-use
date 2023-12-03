@@ -189,6 +189,7 @@
       );
       const { data } = ret;
       item.status = UploadResultStatus.SUCCESS;
+      // console.log('_uploadApiByItem', data);
       item.response = data;
       return {
         success: true,
@@ -217,9 +218,12 @@
         fileListRef.value.filter((item) => item.status !== UploadResultStatus.SUCCESS) || [];
       const data = await Promise.all(
         uploadFileList.map((item) => {
-          return uploadApiByItem(item);
+          const rItem = uploadApiByItem(item);
+          // console.log('_uploadFileList.map item', rItem);
+          return rItem;
         }),
       );
+      // console.log('_data', data);
       isUploadingRef.value = false;
       // 生产环境:抛出错误
       const errorList = data.filter((item: any) => !item.success);
@@ -242,10 +246,13 @@
     }
     const fileList: string[] = [];
 
+    // console.log('_handleOk', fileListRef.value);
     for (const item of fileListRef.value) {
       const { status, response } = item;
       if (status === UploadResultStatus.SUCCESS && response) {
-        fileList.push(response.url);
+        // fileList.push(response.url);
+        // TIP: 保存上传成功返回的地址
+        fileList.push(response.data.url);
       }
     }
     // 存在一个上传成功的即可保存
