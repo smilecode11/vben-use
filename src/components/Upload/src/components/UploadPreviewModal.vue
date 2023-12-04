@@ -1,6 +1,7 @@
 <template>
   <BasicModal
     width="800px"
+    :min-height="420"
     :title="t('component.upload.preview')"
     class="upload-preview-modal"
     v-bind="$attrs"

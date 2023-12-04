@@ -54,7 +54,7 @@
       if (props.useCustomDrag) {
         onMounted(() => {
           // console.log('_props.useCustomDrag');
-          new Sortable(sortableContainer.value, {
+          new Sortable(sortableContainer.value as any, {
             group: 'sortList',
             animation: 150,
             handle: '.handle',
