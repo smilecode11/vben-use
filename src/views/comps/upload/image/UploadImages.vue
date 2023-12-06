@@ -1,5 +1,5 @@
 <template>
-  <CollapseContainer title="通用的图片上传">
+  <CollapseContainer title="通用的图片上传" :show="false">
     <BasicUpload
       :maxSize="10"
       :maxNumber="3"

@@ -1,5 +1,5 @@
 <template>
-  <CollapseContainer title="图片裁切使用和上传">
+  <CollapseContainer title="图片裁切使用和上传" :show="true">
     <div class="flex" style="align-items: center">
       <CropperImage
         ref="refCropper"

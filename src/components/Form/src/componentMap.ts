@@ -20,6 +20,7 @@ import {
   TimePicker,
   TreeSelect,
 } from 'ant-design-vue';
+
 import ApiRadioGroup from './components/ApiRadioGroup.vue';
 import RadioButtonGroup from './components/RadioButtonGroup.vue';
 import ApiSelect from './components/ApiSelect.vue';
@@ -31,6 +32,8 @@ import { BasicUpload, ImageUpload } from '@/components/Upload';
 import { StrengthMeter } from '@/components/StrengthMeter';
 import { IconPicker } from '@/components/Icon';
 import { CountdownInput } from '@/components/CountDown';
+
+import { ImageMultipleUpload } from '@/views/comps/upload/image/components/MultipleUploadWithDrag/index';
 
 const componentMap = new Map<ComponentType, Component>();
 
@@ -71,6 +74,8 @@ componentMap.set('InputCountDown', CountdownInput);
 
 componentMap.set('Upload', BasicUpload);
 componentMap.set('Divider', Divider);
+
+componentMap.set('ImageMultipleUpload', ImageMultipleUpload);
 
 export function add(compName: ComponentType, component: Component) {
   componentMap.set(compName, component);

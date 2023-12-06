@@ -9,6 +9,7 @@
   import { useDesign } from '@/hooks/web/useDesign';
 
   const collapseContainerProps = {
+    show: { type: Boolean, default: true },
     title: { type: String, default: '' },
     loading: { type: Boolean },
     /**
@@ -43,7 +44,7 @@
     setup(props, { expose, slots }) {
       const { prefixCls } = useDesign('collapse-container');
 
-      const show = ref(true);
+      const show = ref(props.show);
 
       const handleExpand = (val: boolean) => {
         show.value = isNil(val) ? !show.value : val;

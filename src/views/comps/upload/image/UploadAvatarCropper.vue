@@ -1,5 +1,5 @@
 <template>
-  <CollapseContainer title="选择图片并上传（弹窗）">
+  <CollapseContainer title="选择图片并上传（弹窗）" :show="false">
     <div class="flex" style="align-items: center">
       <CropperAvatar :src="sourceSrc" :uploadApi="uploadToOSS" @change="onChange" />
       <a-image :src="sourceSrc" class="ml-2" />
