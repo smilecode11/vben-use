@@ -19,11 +19,7 @@
       </template>
     </BasicForm>
 
-    <MapSelection
-      ref="mapSelectionRef"
-      type="address,distance"
-      @get-map-selection="onGetMapSelection"
-    />
+    <MapSelection ref="mapSelectionRef" useDistance @get-map-selection="onGetMapSelection" />
   </div>
 </template>
 

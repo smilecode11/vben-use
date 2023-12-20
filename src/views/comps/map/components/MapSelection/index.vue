@@ -55,7 +55,7 @@
 
   const props = defineProps(MapSelectionProps);
   const emit = defineEmits(['getMapSelection']);
-  const useDistance = computed(() => props.type === 'address,distance'); //  选点并需要范围值
+  const useDistance = computed(() => props.useDistance); //  选点并需要范围值
 
   let AMap = '' as any;
   let map = '' as any;

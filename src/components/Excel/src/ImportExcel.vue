@@ -211,6 +211,7 @@
    * @description: 点击上传按钮
    */
   function handleUpload() {
+    console.log('_handleUpload');
     const inputRefDom = unref(inputRef);
     if (inputRefDom) {
       cancelRef.value = true;
