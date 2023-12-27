@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="SurelyTable">
+  <PageWrapper title="VxeTable">
     <template #headerContent>
       <h4>{{ headerContent }}</h4>
     </template>
@@ -14,8 +14,9 @@
         <a-tab-pane key="other_opera" :tab="OTHER_OPERA_TITLE">
           <OtherOpera />
         </a-tab-pane>
-        <!-- <a-tab-pane key="export_save" :tab="EXPORT_SAVE_TITLE">
-        </a-tab-pane> -->
+        <a-tab-pane key="export_save" :tab="EXPORT_SAVE_TITLE">
+          <!--  -->
+        </a-tab-pane>
       </a-tabs>
     </div>
   </PageWrapper>
@@ -25,13 +26,12 @@
   import { ref } from 'vue';
   import { Tabs as ATabs, TabPane as ATabPane } from 'ant-design-vue';
   import { PageWrapper } from '@/components/Page';
-  import '@surely-vue/table/dist/index.less';
-  import Basic from './components/Surely/Basic.vue';
-  import Service from './components/Surely/Service.vue';
-  import OtherOpera from './components/Surely/OtherOpera.vue';
+  import Basic from './components/Vxe/Basic.vue';
+  import Service from './components/Vxe/Service.vue';
+  import OtherOpera from './components/Vxe/OtherOpera.vue';
 
   const activeKey = ref('basic');
-  const headerContent = ref('Surely Table 使用示例');
+  const headerContent = ref('Vxe Table 使用示例');
   const BASIC_TITLE = '基础示例';
   const SERVICE_TITLE = '远程数据获取示例';
   const OTHER_OPERA_TITLE = '合并表头/拖拽/右键菜单示例';
